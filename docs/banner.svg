@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 344" width="1200" height="344" font-family="'JetBrains Mono','Hack','DejaVu Sans Mono',Menlo,Consolas,monospace">
+  <rect x="1" y="1" width="1198" height="342" rx="16" fill="#1d2021" stroke="#504945" stroke-width="2"/>
+
+  <!-- mark: corner brackets around a gold square, same as the app icon -->
+  <g transform="translate(64 52) scale(0.375)">
+    <rect x="8" y="8" width="240" height="240" rx="44" fill="#282828" stroke="#504945" stroke-width="4"/>
+    <g fill="none" stroke="#ebdbb2" stroke-width="12" stroke-linecap="square">
+      <path d="M56 92V56h36"/><path d="M164 56h36v36"/><path d="M200 164v36h-36"/><path d="M92 200H56v-36"/>
+    </g>
+    <rect x="98" y="98" width="60" height="60" fill="#fabd2f"/>
+  </g>
+
+  <text x="184" y="122" font-size="84" font-weight="600" letter-spacing="10" fill="#ebdbb2">OVERSEER</text>
+  <text x="188" y="164" font-size="24" fill="#a89984">one window for all your Claude Code sessions</text>
+
+  <!-- tab strip: the four states a tab can be in -->
+  <g font-size="22">
+    <rect x="64" y="212" width="254" height="76" rx="8" fill="#282828" stroke="#fabd2f" stroke-width="2"/>
+    <text x="84" y="244" fill="#ebdbb2">web-app</text>
+    <text x="84" y="272" font-size="18" fill="#fabd2f">● finished a turn</text>
+
+    <rect x="334" y="212" width="254" height="76" rx="8" fill="#282828" stroke="#fb4934" stroke-width="2"/>
+    <text x="354" y="244" fill="#ebdbb2">api</text>
+    <text x="354" y="272" font-size="18" fill="#fb4934">● needs you</text>
+
+    <rect x="604" y="212" width="254" height="76" rx="8" fill="#282828" stroke="#504945" stroke-width="2"/>
+    <text x="624" y="244" fill="#ebdbb2">landing</text>
+    <text x="624" y="272" font-size="18" fill="#83a598">◐ working</text>
+
+    <rect x="874" y="212" width="254" height="76" rx="8" fill="#282828" stroke="#504945" stroke-width="2"/>
+    <text x="894" y="244" fill="#ebdbb2">docs</text>
+    <text x="894" y="272" font-size="18" fill="#928374">○ shell</text>
+  </g>
+</svg>
