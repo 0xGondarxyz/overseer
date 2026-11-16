@@ -1,0 +1,14 @@
+{
+  "_synthetic": true,
+  "session_id": "00000000-0000-4000-8000-000000000001",
+  "transcript_path": "/home/user/.claude/projects/-home-user-projects-demo/00000000-0000-4000-8000-000000000001.jsonl",
+  "cwd": "/home/user/projects/demo",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "Notification",
+  "message": "Claude is waiting for your input",
+  "title": "Waiting",
+  "notification_type": "idle_prompt"
+}

@@ -1,0 +1,30 @@
+/* Status and System boxes. */
+.box {
+  --h-text: #ebdbb2; --h-dim: #928374; --h-track: #665c54; --h-line: #504945;
+  --h-orange: #fe8019; --h-lav: #83a598; --h-green: #b8bb26; --h-yellow: #fabd2f; --h-pink: #fb4934;
+  --h-c: var(--h-line);
+  border: 1.5px solid var(--h-c);
+  border-radius: 8px;
+  padding: 6px 8px 8px;
+  font: 18.67px/1.19 "Hack Nerd Font Mono", "JetBrains Mono", monospace;
+  color: var(--h-text);
+  min-width: 0;
+}
+.box[data-kind="status"] { --h-c: var(--h-orange); }
+.box[data-kind="system"] { --h-c: var(--h-lav); }
+.bh { display: flex; align-items: center; gap: 8px; color: var(--h-text); white-space: nowrap; }
+.bt { color: var(--h-c); font-weight: 700; }
+.bh-r { margin-left: auto; display: flex; align-items: center; gap: 8px; color: var(--h-dim); }
+.bx { border: 0; background: transparent; color: var(--h-text); font: 700 18.67px "Hack Nerd Font Mono", "JetBrains Mono", monospace; cursor: pointer; padding: 0; }
+.bx:hover { color: var(--h-c); }
+.box.min .bb { display: none; }
+.bl { white-space: pre; overflow: hidden; text-overflow: ellipsis; color: var(--h-text); }
+.bl .k, .k { color: var(--h-dim); }
+.bl .off { color: var(--h-track); }
+.hg { color: var(--h-green); } .hy { color: var(--h-yellow); } .hp { color: var(--h-pink); } .ho { color: var(--h-orange); }
+.hb { font-weight: 700; }
+/* a task row: the title takes the room and is cut with an ellipsis, the tag sits at the right edge */
+.bt-row { display: flex; gap: 0; }
+.bt-row > span:first-child { flex: none; margin-right: 1ch; }
+.bt-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.bt-tag { flex: none; margin-left: 1ch; }

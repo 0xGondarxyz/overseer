@@ -1,0 +1,25 @@
+{
+  "name": "overseer",
+  "version": "0.1.0",
+  "description": "A desktop terminal with tabs and an overseer that can see every tab.",
+  "license": "MIT",
+  "author": "0xGondarxyz",
+  "repository": "https://github.com/0xGondarxyz/overseer",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "rebuild": "electron-rebuild -f -w node-pty"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-sans": "5.3.0",
+    "@fontsource/jetbrains-mono": "5.3.0",
+    "@xterm/addon-fit": "0.11.0",
+    "@xterm/xterm": "6.0.0",
+    "electron": "45.3.3",
+    "node-pty": "1.1.0"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "4.2.1",
+    "playwright": "1.65.1"
+  }
+}

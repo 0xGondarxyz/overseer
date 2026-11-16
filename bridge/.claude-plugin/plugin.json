@@ -1,0 +1,1 @@
+{ "name": "overseer-bridge", "version": "0.1.0", "description": "Writes rate limits, model, effort and context for Overseer to read." }

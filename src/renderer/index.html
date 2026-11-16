@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Overseer</title>
+<link rel="stylesheet" href="../../node_modules/@fontsource/ibm-plex-sans/400.css">
+<link rel="stylesheet" href="../../node_modules/@fontsource/ibm-plex-sans/500.css">
+<link rel="stylesheet" href="../../node_modules/@fontsource/ibm-plex-sans/600.css">
+<link rel="stylesheet" href="../../node_modules/@fontsource/jetbrains-mono/400.css">
+<link rel="stylesheet" href="../../node_modules/@fontsource/jetbrains-mono/500.css">
+<link rel="stylesheet" href="../../node_modules/@fontsource/jetbrains-mono/700.css">
+<link rel="stylesheet" href="../../node_modules/@xterm/xterm/css/xterm.css">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="boxes.css">
+</head>
+<body>
+<div class="app" id="app">
+  <div class="titlebar">
+    <span class="brand">OVERSEER</span>
+    <span class="brand-sub" id="brandSub"></span>
+    <div class="tb-actions">
+      <button type="button" class="tb-btn" id="bellBtn" aria-pressed="true" title="Bell when a tab finishes">
+        <svg class="bell-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <svg class="bell-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/><path d="M3 3l18 18"/></svg>
+        <span class="lbl-long">Bell</span>
+      </button>
+      <button type="button" class="tb-btn primary" id="wakeBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span id="wakeLbl">Wake overseer</span>
+      </button>
+      <button type="button" class="tb-btn icon" id="quitBtn" title="Quit Overseer" aria-label="Quit Overseer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="tabs" id="tabs" role="tablist" aria-label="Claude sessions"><button type="button" class="tab-add" id="addBtn" title="New shell tab (right-click: pick a folder)" aria-label="New tab">+</button></div>
+  <div class="body">
+    <div class="pane">
+      <div class="strip" id="strip" hidden>
+        <span class="strip-t" id="stripText"></span>
+        <button type="button" class="go" id="stripCont">Continue</button>
+        <button type="button" id="stripNew">New session</button>
+        <button type="button" class="strip-x" id="stripX" aria-label="Dismiss">×</button>
+      </div>
+      <div class="terms" id="terms"></div>
+      <div class="agents" id="agents" hidden></div>
+    </div>
+    <aside class="overseer" id="ov" hidden aria-label="Overseer">
+      <div class="ov-head">
+        <span class="ov-name">Overseer · Opus</span>
+        <span class="ov-path" id="ovPath"></span>
+        <span class="ov-status" id="ovStatus"></span>
+        <button type="button" class="tb-btn" id="ovHide">Hide</button>
+        <button type="button" class="tb-btn" id="ovSleep">Sleep</button>
+      </div>
+      <div class="ov-main">
+        <div class="ov-chat">
+          <div class="ov-term" id="ovTerm"><div class="term-inner" id="ovTermInner"></div></div>
+          <div class="ov-chips" id="ovChips">
+            <button type="button">What is each tab doing?</button>
+            <button type="button">What should I do next?</button>
+            <button type="button">Which tab is stuck?</button>
+            <button type="button">What did we decide today?</button>
+          </div>
+        </div>
+        <div class="ov-tabs" id="ovTabs">
+          <div class="ov-k">What I know <span>· one line per open tab</span></div>
+          <ul class="ov-list" id="ovList"></ul>
+          <div class="ov-foot">
+            <button type="button" class="ov-link" id="ovMergeMode">Merge two tabs</button>
+            <button type="button" class="tb-btn primary" id="ovMerge" hidden disabled>Pick 2 tabs</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <aside class="side" id="side" aria-label="Status">
+      <button type="button" class="rail-btn" id="railBtn" title="Show or hide the status column" aria-label="Toggle status column">‹</button>
+      <div class="side-in">
+        <div class="box" id="useBox"><div class="bh"><span class="bt">Status</span><span class="bh-r"><button type="button" class="bx" data-box="useBox">[ × ]</button></span></div><div class="bb" id="useBody"></div></div>
+        <div class="box" id="sysBox"><div class="bh"><span class="bt">System</span><span class="bh-r"><span id="clock"></span><button type="button" class="bx" data-box="sysBox">[ × ]</button></span></div><div class="bb" id="sysBody"></div></div>
+      </div>
+    </aside>
+  </div>
+  <div class="statusbar" id="statusbar"></div>
+  <div class="ctxmenu" id="ctx" hidden><button type="button" data-a="copy">Copy</button><button type="button" data-a="paste">Paste</button></div>
+  <div class="modal" id="quitModal" hidden role="dialog" aria-modal="true" aria-labelledby="quitTitle">
+    <div class="mcard">
+      <h4 id="quitTitle">Quit Overseer?</h4>
+      <p id="quitText"></p>
+      <div class="mbtns"><button type="button" class="tb-btn primary" id="quitYes">Quit</button><button type="button" class="tb-btn" id="quitNo">Cancel</button></div>
+    </div>
+  </div>
+</div>
+<script src="../../node_modules/@xterm/xterm/lib/xterm.js"></script>
+<script src="../../node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
+<script src="boxes.js"></script>
+<script src="boxes-adapter.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

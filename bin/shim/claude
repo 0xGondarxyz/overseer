@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Overseer shim: typing `claude` in an Overseer tab runs the real claude with our hooks and bridge mod.
+# The real binary comes from OVERSEER_REAL_CLAUDE (never resolved through PATH: that would loop back here).
+if [ -z "${OVERSEER_REAL_CLAUDE:-}" ]; then
+  echo "overseer: no real claude binary (OVERSEER_REAL_CLAUDE is not set)." >&2
+  echo "overseer: Overseer could not find Claude Code when it started. Install it, or set OVERSEER_CLAUDE_BIN, then restart Overseer." >&2
+  exit 127
+fi
+if [ ! -x "$OVERSEER_REAL_CLAUDE" ]; then
+  echo "overseer: OVERSEER_REAL_CLAUDE points to $OVERSEER_REAL_CLAUDE, which is missing or not executable." >&2
+  echo "overseer: repair that path (or set OVERSEER_CLAUDE_BIN), then restart Overseer." >&2
+  exit 127
+fi
+real="$OVERSEER_REAL_CLAUDE"
+case "${1:-}" in
+  mcp|plugin|plugins|update|doctor|install|config|setup-token|migrate-installer|agents|--version|-v|--help|-h)
+    exec "$real" "$@" ;;
+esac
+if [ -n "${OVERSEER_HOOKS:-}" ] && [ -n "${OVERSEER_APP:-}" ]; then
+  exec "$real" --settings "$OVERSEER_HOOKS" --plugin-dir "$OVERSEER_APP/bridge" "$@"
+fi
+exec "$real" "$@"

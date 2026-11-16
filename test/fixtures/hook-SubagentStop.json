@@ -1,0 +1,16 @@
+{
+  "_synthetic": true,
+  "session_id": "00000000-0000-4000-8000-000000000001",
+  "transcript_path": "/home/user/.claude/projects/-home-user-projects-demo/00000000-0000-4000-8000-000000000001.jsonl",
+  "cwd": "/home/user/projects/demo",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "SubagentStop",
+  "stop_hook_active": false,
+  "agent_id": "def456",
+  "agent_type": "Explore",
+  "agent_transcript_path": "/home/user/.claude/projects/x/subagents/agent-def456.jsonl",
+  "last_assistant_message": "Analysis complete."
+}

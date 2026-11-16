@@ -1,0 +1,95 @@
+#!/usr/bin/env -S python3 -I
+"""Show or hide the Overseer window. Bind a global shortcut (Alt+W) to this file.
+
+On KDE it behaves like Yakuake: the window comes to the monitor under the mouse and gets focus;
+pressing again while it is focused there hides it. Elsewhere it falls back to a plain show/hide.
+If the app is not running, it is started."""
+import json, os, socket, subprocess, sys, tempfile, time
+
+ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+EXEC = [ROOT + "/node_modules/electron/dist/electron", ROOT]  # same as overseer.desktop Exec
+KWIN_SCRIPT = ROOT + "/bin/kwin/toggle.js"
+
+
+def sock_path():
+    p = os.environ.get("OVERSEER_SOCK")
+    if p:
+        return p
+    return "%s/overseer-%d.sock" % (os.environ.get("XDG_RUNTIME_DIR") or tempfile.gettempdir(), os.getuid())
+
+
+def call(cmd):
+    """One hub request; returns the reply's data, or raises OSError when no app is running."""
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    s.settimeout(1.0)
+    try:
+        s.connect(sock_path())
+        s.sendall((json.dumps({"type": "cli", "cmd": cmd, "args": {}}) + "\n").encode())
+        buf = b""
+        while b"\n" not in buf:
+            d = s.recv(4096)
+            if not d:
+                break
+            buf += d
+    finally:
+        s.close()
+    try:
+        return json.loads(buf.decode().strip() or "{}").get("data")
+    except ValueError:
+        return None
+
+
+def busctl(*args):
+    r = subprocess.run(["busctl", "--user", "call", "org.kde.KWin", *args],
+                       capture_output=True, text=True, timeout=2)
+    if r.returncode != 0:
+        raise OSError(r.stderr.strip())
+    return r.stdout.strip()
+
+
+def kwin(mode):
+    """Run the KWin script in 'toggle' or 'show' mode. Raises OSError when KWin scripting is missing."""
+    src = open(KWIN_SCRIPT).read().replace("__MODE__", mode)
+    path = "%s/overseer-kwin-%d.js" % (os.environ.get("XDG_RUNTIME_DIR") or tempfile.gettempdir(), os.getuid())
+    with open(path, "w") as f:
+        f.write(src)
+    name = "overseer-toggle"
+    try:
+        busctl("/Scripting", "org.kde.kwin.Scripting", "unloadScript", "s", name)
+    except OSError:
+        pass
+    out = busctl("/Scripting", "org.kde.kwin.Scripting", "loadScript", "ss", path, name)
+    sid = out.split()[-1]
+    busctl("/Scripting/Script" + sid, "org.kde.kwin.Script", "run")
+    busctl("/Scripting", "org.kde.kwin.Scripting", "unloadScript", "s", name)
+
+
+def main():
+    # tests set OVERSEER_SOCK and must never touch the real desktop's windows
+    use_kwin = not os.environ.get("OVERSEER_SOCK") and os.environ.get("XDG_CURRENT_DESKTOP", "KDE").upper().find("KDE") >= 0
+    try:
+        state = call("state") if use_kwin else None
+    except OSError:
+        subprocess.Popen(EXEC, start_new_session=True, stdin=subprocess.DEVNULL,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True)
+        return 0
+    if not use_kwin:
+        try:
+            call("toggle")
+        except OSError:
+            subprocess.Popen(EXEC, start_new_session=True, stdin=subprocess.DEVNULL,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True)
+        return 0
+    try:
+        if isinstance(state, dict) and not state.get("visible"):
+            call("show")
+            time.sleep(0.15)  # let KWin map the window before moving it
+            kwin("show")
+        else:
+            kwin("toggle")
+    except OSError:
+        call("toggle")
+    return 0
+
+
+sys.exit(main())
